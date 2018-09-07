@@ -91,7 +91,6 @@ int maxveldiff(const char* flow_file)
     free(u_min);
     free(v_max);
     free(v_min);
-
     return num_points;
 }
 
@@ -176,7 +175,7 @@ void coarsegrid(const char* flow_file, int resolution, int num_points)
 
     for (int i=0; i < resolution; i++) {
         for (int j=0; j < resolution; j++) {
-            insertion_sort(list, average(grid[i][j]));
+            insertion_sort(&list, average(grid[i][j]), 'S');
         }
     }
     FILE* out = safe_open(outfile, "w");
@@ -193,10 +192,12 @@ void coarsegrid(const char* flow_file, int resolution, int num_points)
 
 void searching(const char* flow_file)
 {
+	char *outfile = "out/task3.csv";
+
 	printf("searching\n");
 	int n_center = 0;
-	Coord** raw = malloc(sizeof(Coord*) + 5*sizeof(double));
-	if (raw == NULL) {
+	Coord** array = malloc(sizeof(Coord*) + 5*sizeof(double));
+	if (array == NULL) {
 		printf("ERROR: malloc failed in coarsegrid\n");
 		exit(EXIT_FAILURE);
 	}
@@ -222,22 +223,122 @@ void searching(const char* flow_file)
 		// if point is on centre line
 		}
 		if (y == 0) {
-			raw=realloc(raw, sizeof(Coord*) + (n_center+1) * 5*sizeof(double));  // add some more memory
+			array=realloc(array, sizeof(Coord*) + (n_center+1) * 5*sizeof(double));  // add some more memory
 			// initialize a coord and save data.
-			raw[n_center] = init_coord(TRUE);
-			raw[n_center]->x = x;
-			raw[n_center]->y = y;
-			raw[n_center]->u = u;
-			raw[n_center]->v = v;
+			array[n_center] = init_coord(TRUE);
+			array[n_center]->x = x;
+			array[n_center]->y = y;
+			array[n_center]->u = u;
+			array[n_center]->v = v;
 			n_center ++;
 		}
 	}
-	merge_sort(raw, 0, n_center-1);
+	fclose(file);
 
+	merge_sort(array, 0, n_center-1);
+
+	// now the array is sorted, make the linked list
+	ListNode* list = malloc(sizeof(ListNode));
+	list->coord = NULL;
+	list->parent= NULL;
+	list->child = NULL;
+
+
+	for (int i=0; i<n_center; i++) {
+		insertion_sort(&list, array[i], 'u');
+	}
+
+
+
+	// Make the BST, since the array is sorted, to make sure the tree is balanced, make the middle root
+
+	int mid = (n_center + 1) / 2;
+	BstNode* bst_root = init_bst_node(array[mid]);
+
+	// insert remaining coordinates
+	for (int i=0; i<n_center; i++) {
+
+		if (i != mid) {
+			BstNode* new_node = init_bst_node(array[i]);
+			bst_insert(&bst_root, new_node);
+			balance_tree(&bst_root);
+		}
+	}
+	// preOrder(bst_root);
+
+	FILE* out = safe_open(outfile, "w");
+	// Search
+	double find = 0.4*array[n_center-1]->u;
+
+	linear_search(array, find, out);
+	binary_search(array, find, out, 0, n_center-1, TRUE);
+	linked_list_search(list, find, out, DBL_MAX);
+	bst_search(bst_root, find, out, FALSE);
 
 }
 
-void vortcalc(const char* flow_file)
+void vortcalc(const char* flow_file, int num_points)
 {
-    printf("vortcalc() - IMPLEMENT ME!\n");
+	int i = 0;
+	int j = 0;
+	int m_x;
+	int m_y;
+	bool calc_w = FALSE;
+
+	double w[num_points][num_points];
+	Coord* domain[num_points][num_points];
+
+	FILE* file = safe_open(flow_file, "r");
+	char * buffer = create_buffer(BUFFER_LEN);
+	bool first_line = TRUE;
+
+	while (fgets(buffer, BUFFER_LEN, file)) {
+		char * ptr; // Pointer used in strtod()
+		double x, y, u, v;
+
+		// get the values of the point from buffer
+		x = strtod(strtok(buffer, ","), &ptr);
+		y = strtod(strtok(NULL, ","), &ptr);
+		u = strtod(strtok(NULL, ","), &ptr);
+		v = strtod(strtok(NULL, ","), &ptr);
+		// First line does not contain data, pass
+		if (first_line == TRUE) {
+			first_line = FALSE;
+
+		} else {
+
+			Coord* new_point = init_coord(TRUE);
+			new_point->x = x;
+			new_point->y = y;
+			new_point->u = u;
+			new_point->v = v;
+
+			m_x = mask(x, X_MIN, X_MAX, num_points);
+			m_y = mask(y, Y_MIN, Y_MAX, num_points);
+
+			if (m_y > j) {
+				j++;
+			}
+			if (m_x > i) {
+				i++;
+			}
+			domain[i][j] = new_point;
+			// every two points calculate w
+			if (calc_w == TRUE) {
+				double v0 = domain[i-1][i-1]->v;
+				double v1 = domain[i][j]->v;
+				double u0 = domain[i-1][i-1]->u;
+				double u1 = domain[i][j]->u;
+				double x0 = domain[i-1][i-1]->x;
+				double x1 = domain[i][j]->x;
+				double y0 = domain[i-1][i-1]->y;
+				double y1 = domain[i][j]->y;
+				w[i - 1][j - 1] = calculate_w(v0,v1,u0,u1,x0,x1,y0,y1);
+				calc_w = FALSE;
+
+			} else {
+				calc_w = TRUE;
+			}
+		}
+	}
 }

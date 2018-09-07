@@ -20,6 +20,6 @@ void coarsegrid(const char* flow_file, int resolution, int num_points);
 
 void searching(const char* flow_file);
 
-void vortcalc(const char* flow_file);
+void vortcalc(const char* flow_file, int num_points);
 
 #endif

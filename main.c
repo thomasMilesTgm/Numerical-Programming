@@ -30,9 +30,6 @@ int main(int argc, char *argv[]) {
         resolution = atoi(argv[2]);
     }
 
-
-	
-
 	
 	struct timeval start;
 	struct timeval stop;
@@ -44,7 +41,7 @@ int main(int argc, char *argv[]) {
 	double elapsed_ms = (stop.tv_sec - start.tv_sec) * 1000.0;
 	elapsed_ms += (stop.tv_usec - start.tv_usec) / 1000.0;
 	printf("TASK 1:  %.2f milliseconds\n", elapsed_ms);
-	
+
 	/* Task 2: Coarser Grid */
 	gettimeofday(&start, NULL);
 	coarsegrid(flow_file, resolution, points);
@@ -52,7 +49,7 @@ int main(int argc, char *argv[]) {
     	elapsed_ms = (stop.tv_sec - start.tv_sec) * 1000.0;
     	elapsed_ms += (stop.tv_usec - start.tv_usec) / 1000.0;
     	printf("TASK 2:  %.2f milliseconds\n", elapsed_ms);
-	
+
 	/* Task 3: Searching */
 	gettimeofday(&start, NULL);
 	searching(flow_file);
@@ -63,7 +60,7 @@ int main(int argc, char *argv[]) {
     
 	/* Task 4: Statistics */
 	gettimeofday(&start, NULL);
-	vortcalc(flow_file);
+	vortcalc(flow_file, points);
 	gettimeofday(&stop, NULL);
     	elapsed_ms = (stop.tv_sec - start.tv_sec) * 1000.0;
     	elapsed_ms += (stop.tv_usec - start.tv_usec) / 1000.0;

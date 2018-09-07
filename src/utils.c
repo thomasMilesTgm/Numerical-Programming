@@ -96,7 +96,7 @@ Coord* average(GridSquare* g) {
     double v_cumulative = 0;
 
     int i = 0;
-    for (i; i < g->n_coords; i++) {
+    for (i=0; i < g->n_coords; i++) {
         x_cumulative += g->coords[i]->x;
         y_cumulative += g->coords[i]->y;
         u_cumulative += g->coords[i]->u;
@@ -340,7 +340,7 @@ BstNode* balance_tree (BstNode **root) {
 		if((*root)->right_child != NULL) balance_tree(&(*root)->right_child);
 		if((*root)->left_child != NULL) balance_tree(&(*root)->left_child);
 	}
-
+	return *root;
 }
 
 void bst_search (BstNode *root, double search_key, FILE *output,  bool found) {
@@ -519,5 +519,6 @@ int mask(double x, double min, double max, int factor) {
 }
 
 double calculate_w(double v0, double v1, double u0, double u1, double x0, double x1, double y0, double y1) {
-
+	double  w = (v1 - v0) / (x1 - x0) - (u1 - u0) / (y1 - y0);
+	return w;
 }

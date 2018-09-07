@@ -10,6 +10,7 @@
 #include <string.h>
 #include <float.h>
 #include <math.h>
+#include <sys/time.h>
 /*_________________________________  Defines  _________________________________*/
 #define ORIGIN 0
 #define BUFFER_LEN 256

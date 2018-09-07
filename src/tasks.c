@@ -179,7 +179,6 @@ void coarsegrid(const char* flow_file, int resolution, int num_points)
         }
     }
     FILE* out = safe_open(outfile, "w");
-	printf("saving\n");
 
 	Coord* c = pop(&list);
 
@@ -192,9 +191,9 @@ void coarsegrid(const char* flow_file, int resolution, int num_points)
 
 void searching(const char* flow_file)
 {
+
 	char *outfile = "out/task3.csv";
 
-	printf("searching\n");
 	int n_center = 0;
 	Coord** array = malloc(sizeof(Coord*) + 5*sizeof(double));
 	if (array == NULL) {
@@ -264,17 +263,42 @@ void searching(const char* flow_file)
 			balance_tree(&bst_root);
 		}
 	}
-	// preOrder(bst_root);
-
 	FILE* out = safe_open(outfile, "w");
-	// Search
+
+	struct timeval start;
+	struct timeval stop;
+
+	// Search for
 	double find = 0.4*array[n_center-1]->u;
 
+	gettimeofday(&start, NULL);
 	linear_search(array, find, out);
-	binary_search(array, find, out, 0, n_center-1, TRUE);
-	linked_list_search(list, find, out, DBL_MAX);
-	bst_search(bst_root, find, out, FALSE);
+	gettimeofday(&stop, NULL);
+		double elapsed_ms = (stop.tv_sec - start.tv_sec) * 1000.0;
+		elapsed_ms += (stop.tv_usec - start.tv_usec) / 1000.0;
+	printf("TASK 3:  Array Linear Search: %.2f milliseconds\n", elapsed_ms);
 
+	gettimeofday(&start, NULL);
+	binary_search(array, find, out, 0, n_center-1, TRUE);
+	gettimeofday(&stop, NULL);
+		elapsed_ms = (stop.tv_sec - start.tv_sec) * 1000.0;
+		elapsed_ms += (stop.tv_usec - start.tv_usec) / 1000.0;
+	printf("TASK 3:  Array Binary Search: %.2f milliseconds\n", elapsed_ms);
+
+	gettimeofday(&start, NULL);
+	linked_list_search(list, find, out, DBL_MAX);
+	gettimeofday(&stop, NULL);
+		elapsed_ms = (stop.tv_sec - start.tv_sec) * 1000.0;
+		elapsed_ms += (stop.tv_usec - start.tv_usec) / 1000.0;
+	printf("TASK 3:  List Linear Search: %.2f milliseconds\n", elapsed_ms);
+
+	gettimeofday(&start, NULL);
+	bst_search(bst_root, find, out, FALSE);
+	gettimeofday(&stop, NULL);
+	elapsed_ms = (stop.tv_sec - start.tv_sec) * 1000.0;
+	elapsed_ms += (stop.tv_usec - start.tv_usec) / 1000.0;
+	printf("TASK 3:  BST Search: %.2f milliseconds\n", elapsed_ms);
+	gettimeofday(&start, NULL);
 }
 
 void vortcalc(const char* flow_file, int num_points)
@@ -285,8 +309,8 @@ void vortcalc(const char* flow_file, int num_points)
 	int m_y;
 	bool calc_w = FALSE;
 
-	double w[num_points][num_points];
-	Coord* domain[num_points][num_points];
+	double w[(int)sqrt(num_points)][(int)sqrt(num_points)];
+	Coord* domain[(int)sqrt(num_points)][(int)sqrt(num_points)];
 
 	FILE* file = safe_open(flow_file, "r");
 	char * buffer = create_buffer(BUFFER_LEN);
@@ -295,7 +319,7 @@ void vortcalc(const char* flow_file, int num_points)
 	while (fgets(buffer, BUFFER_LEN, file)) {
 		char * ptr; // Pointer used in strtod()
 		double x, y, u, v;
-
+printf("%d, %d\n____\n", num_points,(int)sqrt(num_points));
 		// get the values of the point from buffer
 		x = strtod(strtok(buffer, ","), &ptr);
 		y = strtod(strtok(NULL, ","), &ptr);

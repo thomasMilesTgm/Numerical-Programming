@@ -19,6 +19,7 @@
 #define Y_MIN (-20)
 #define X_MAX 90
 #define Y_MAX 20
+#define DIMS 2
 
 /*_________________________________  Typedefs _________________________________*/
 
@@ -29,6 +30,7 @@ typedef struct {
     double u;
     double v;
     double S;
+	double w;
 } Coord;
 
 typedef struct GridSquare {
@@ -82,4 +84,5 @@ void preOrder(BstNode *root);
 BstNode * copy_bst_node(BstNode* node);
 int mask(double x, double min, double max, int factor);
 double calculate_w(double v0, double v1, double u0, double u1, double x0, double x1, double y0, double y1);
+int* calc_n_m(const char* filepath);
 #endif //ASSIGNMENT_1_UTILS_H

@@ -12,7 +12,7 @@
 #define MAX_X_COARSE 70
 #define MIN_Y_COARSE (-20)
 #define MAX_Y_COARSE 20
-
+#define TEST 500
 
 int maxveldiff(const char* flow_file);
 
@@ -20,6 +20,6 @@ void coarsegrid(const char* flow_file, int resolution, int num_points);
 
 void searching(const char* flow_file);
 
-void vortcalc(const char* flow_file, int num_points);
+void vortcalc(const char* flow_file);
 
 #endif

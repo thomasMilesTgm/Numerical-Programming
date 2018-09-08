@@ -277,23 +277,31 @@ void searching(const char* flow_file)
 
 }
 
-void vortcalc(const char* flow_file, int num_points)
+void vortcalc(const char* flow_file)
 {
-	int i = 0;
-	int j = 0;
-	int m_x;
-	int m_y;
-	bool calc_w = FALSE;
+	int i_x=0, i_y=0;
+	int* n_m;
+	n_m = calc_n_m(flow_file);
+//printf("(%d, %d)\n",n_m[0],n_m[1]);
+	//double w[n_m[0]][n_m[1]];
 
-	double w[num_points][num_points];
-	Coord* domain[num_points][num_points];
+	Coord*** domain = malloc(sizeof(Coord*));
+
+	for (int i=0; i <= n_m[0]; i++) {
+		for (int j = 0; j <= n_m[1]; j++) {
+
+			domain[i] = (Coord **) malloc(n_m[0] * sizeof(Coord **));
+			domain[i][j] = init_coord(TRUE);
+		}
+	}
+
 
 	FILE* file = safe_open(flow_file, "r");
 	char * buffer = create_buffer(BUFFER_LEN);
 	bool first_line = TRUE;
 
 	while (fgets(buffer, BUFFER_LEN, file)) {
-		char * ptr; // Pointer used in strtod()
+		char *ptr; // Pointer used in strtod()
 		double x, y, u, v;
 
 		// get the values of the point from buffer
@@ -301,43 +309,57 @@ void vortcalc(const char* flow_file, int num_points)
 		y = strtod(strtok(NULL, ","), &ptr);
 		u = strtod(strtok(NULL, ","), &ptr);
 		v = strtod(strtok(NULL, ","), &ptr);
+
 		// First line does not contain data, pass
 		if (first_line == TRUE) {
 			first_line = FALSE;
 
 		} else {
 
-			Coord* new_point = init_coord(TRUE);
-			new_point->x = x;
-			new_point->y = y;
-			new_point->u = u;
-			new_point->v = v;
+			Coord *new_coord = init_coord(TRUE);
+			new_coord->x = x;
+			new_coord->y = y;
+			new_coord->u = u;
+			new_coord->v = v;
 
-			m_x = mask(x, X_MIN, X_MAX, num_points);
-			m_y = mask(y, Y_MIN, Y_MAX, num_points);
+			domain[i_x][i_y] = new_coord;
 
-			if (m_y > j) {
-				j++;
-			}
-			if (m_x > i) {
-				i++;
-			}
-			domain[i][j] = new_point;
-			// every two points calculate w
-			if (calc_w == TRUE) {
-				double v0 = domain[i-1][i-1]->v;
-				double v1 = domain[i][j]->v;
-				double u0 = domain[i-1][i-1]->u;
-				double u1 = domain[i][j]->u;
-				double x0 = domain[i-1][i-1]->x;
-				double x1 = domain[i][j]->x;
-				double y0 = domain[i-1][i-1]->y;
-				double y1 = domain[i][j]->y;
-				w[i - 1][j - 1] = calculate_w(v0,v1,u0,u1,x0,x1,y0,y1);
-				calc_w = FALSE;
+			if (i_x < n_m[0] - 1) {
+				i_x ++;
 
 			} else {
-				calc_w = TRUE;
+				i_x = 0;
+				i_y ++;
+			}
+		}
+	}
+
+	// compute omega and insertion sort values into a list
+	ListNode* sorted = malloc(sizeof(ListNode));
+	if (sorted==NULL) {
+		printf("ERROR: malloc failure\n");
+		exit(EXIT_FAILURE);
+	}
+	sorted->coord = domain[0][0];
+	sorted->child = NULL;
+	sorted->parent= NULL;
+
+	for (int x=0; x < n_m[0]-1; x++) {
+		for (int y=0; y < n_m[1]-1; y++) {
+
+			double v0 = domain[x][y]->v;
+			double v1 = domain[x+1][y+1]->v;
+			double u0 = domain[x][y]->u;
+			double u1 = domain[x+1][y+1]->u;
+			double x0 = domain[x][y]->x;
+			double x1 = domain[x+1][y+1]->x;
+			double y0 = domain[x][y]->y;
+			double y1 = domain[x+1][y+1]->y;
+			domain[x][y]->w = calculate_w(v0,v1,u0,u1,x0,x1,y0,y1);
+
+			// add to sorted list
+			if (x!=0 && y!=0) {
+				//insertion_sort(&sorted, domain[x][y], 'w');
 			}
 		}
 	}

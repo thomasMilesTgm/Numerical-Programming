@@ -179,9 +179,10 @@ void coarsegrid(const char* flow_file, int resolution, int num_points)
         }
     }
     FILE* out = safe_open(outfile, "w");
-	printf("saving\n");
 
 	Coord* c = pop(&list);
+
+	fprintf(out, "x,y,u,v,S\n");
 
     // pop values from the list for printing
     while (c != NULL) {
@@ -192,9 +193,13 @@ void coarsegrid(const char* flow_file, int resolution, int num_points)
 
 void searching(const char* flow_file)
 {
+	struct timeval start;
+	struct timeval stop;
+	double elapsed_ms=0;
+
 	char *outfile = "out/task3.csv";
 
-	printf("searching\n");
+
 	int n_center = 0;
 	Coord** array = malloc(sizeof(Coord*) + 5*sizeof(double));
 	if (array == NULL) {
@@ -270,10 +275,41 @@ void searching(const char* flow_file)
 	// Search
 	double find = 0.4*array[n_center-1]->u;
 
+	gettimeofday(&start, NULL);
+
 	linear_search(array, find, out);
+
+	gettimeofday(&stop, NULL);
+	elapsed_ms = (stop.tv_sec - start.tv_sec) * 1000.0;
+	elapsed_ms += (stop.tv_usec - start.tv_usec) / 1000.0;
+	printf("TASK 3:  Array Linear Search:  %.2f milliseconds\n", elapsed_ms);
+
+	gettimeofday(&start, NULL);
+
 	binary_search(array, find, out, 0, n_center-1, TRUE);
+
+	gettimeofday(&stop, NULL);
+	elapsed_ms = (stop.tv_sec - start.tv_sec) * 1000.0;
+	elapsed_ms += (stop.tv_usec - start.tv_usec) / 1000.0;
+	printf("TASK 3:  Array Binary Search:  %.2f milliseconds\n", elapsed_ms);
+
+	gettimeofday(&start, NULL);
+
 	linked_list_search(list, find, out, DBL_MAX);
+
+	gettimeofday(&stop, NULL);
+	elapsed_ms = (stop.tv_sec - start.tv_sec) * 1000.0;
+	elapsed_ms += (stop.tv_usec - start.tv_usec) / 1000.0;
+	printf("TASK 3:  List Linear Search:  %.2f milliseconds\n", elapsed_ms);
+
+	gettimeofday(&start, NULL);
+
 	bst_search(bst_root, find, out, FALSE);
+
+	gettimeofday(&stop, NULL);
+	elapsed_ms = (stop.tv_sec - start.tv_sec) * 1000.0;
+	elapsed_ms += (stop.tv_usec - start.tv_usec) / 1000.0;
+	printf("TASK 3:  BST Search:  %.2f milliseconds\n", elapsed_ms);
 
 }
 

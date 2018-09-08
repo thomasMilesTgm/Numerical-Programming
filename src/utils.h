@@ -10,15 +10,11 @@
 #include <string.h>
 #include <float.h>
 #include <math.h>
+#include <sys/time.h>
 /*_________________________________  Defines  _________________________________*/
 #define ORIGIN 0
 #define BUFFER_LEN 256
 #define X_MIN_VD 20         // minimum x value to consider for velocity difference
-#define PARAMS 5            // number of params in avg array
-#define X_MIN 0
-#define Y_MIN (-20)
-#define X_MAX 90
-#define Y_MAX 20
 #define DIMS 2
 
 /*_________________________________  Typedefs _________________________________*/

@@ -585,3 +585,13 @@ int* calc_n_m(const char* filepath) {
 	fclose(file);
 	return n_m;
 }
+
+void descending(BstNode *root, FILE *out) {
+	if (root == NULL) {
+		return;
+	}
+
+	descending(root->right_child, out);
+	fprintf(out,"%.6f\n",root->coord->w);
+	descending(root->left_child, out);
+}

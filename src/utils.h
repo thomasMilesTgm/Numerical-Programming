@@ -85,4 +85,5 @@ BstNode * copy_bst_node(BstNode* node);
 int mask(double x, double min, double max, int factor);
 double calculate_w(double v0, double v1, double u0, double u1, double x0, double x1, double y0, double y1);
 int* calc_n_m(const char* filepath);
+void descending(BstNode *root, FILE *out);
 #endif //ASSIGNMENT_1_UTILS_H

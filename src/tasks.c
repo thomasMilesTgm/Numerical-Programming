@@ -279,6 +279,7 @@ void searching(const char* flow_file)
 
 void vortcalc(const char* flow_file)
 {
+	char* outfile = "out/task4.csv";
 	int i_x=0, i_y=0;
 	int* n_m;
 	n_m = calc_n_m(flow_file);
@@ -357,6 +358,8 @@ void vortcalc(const char* flow_file)
 			}
 		}
 	}
-	preOrder(root);
+	FILE* out = safe_open(outfile, "w");
+	fprintf(out, "omega\n");
+	descending(root, out);
 
 }

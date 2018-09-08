@@ -135,8 +135,25 @@ ListNode* insertion_sort(ListNode** list, Coord* coord, char sort_by) {
     } else if ((*list)->child == NULL) {
 
 
-	    if (sort_by == 'S' && (*list)->coord->S < coord->S) {
+	    int comp = 0;
 
+	    // key comparison definitions
+	    if (sort_by == 'S') {
+		    comp = (*list)->coord->S < coord->S;
+
+	    } else if (sort_by == 'u') {
+		    comp = (*list)->coord->u < coord->u;
+
+	    } else if (sort_by == 'w') {
+		    comp = (*list)->coord->w < coord->w;
+
+	    } else {
+		    printf("ERROR: unrecognised key for insertion sort comparison\n");
+	    }
+
+
+
+	    if (comp) {
 //		    printf("Found position, inserting\n");
 		    // list has lower score than coord, insert
 		    ListNode *tmp = (*list);
@@ -157,24 +174,6 @@ ListNode* insertion_sort(ListNode** list, Coord* coord, char sort_by) {
 
 		    (*list)->child->parent = (*list);
 
-        } else if (sort_by == 'u' && (*list)->coord->u < coord->u) {
-		    //printf("Found position, inserting\n");
-		    // list has lower score than coord, insert
-		    ListNode *tmp = (*list);
-		    ListNode *tmp_parent = NULL;
-
-		    if ((*list)->parent != NULL) {
-			    tmp_parent = (*list)->parent;
-		    }
-
-		    (*list) = malloc(sizeof(ListNode));
-		    if ((*list) == NULL) {
-			    printf("ERROR: malloc failed in insertion_sort\n");
-			    exit(EXIT_FAILURE);
-		    }
-		    (*list)->coord = coord;
-		    (*list)->child = tmp;
-		    (*list)->parent = tmp_parent;
 	    }
 
     } else if ((*list)->child != NULL) {
@@ -290,14 +289,27 @@ BstNode * init_bst_node (Coord* coord) {
 	return node;
 }
 
-BstNode* bst_insert (BstNode **root, BstNode *orphan) {
+BstNode* bst_insert (BstNode **root, BstNode *orphan, char key) {
 	/**
 	*
 	*/
 	if (root == NULL) {
 		return (orphan);
 	}
-	double cmp = (*root)->coord->u - orphan->coord->u;
+	double cmp;
+	if (key == 'u') {
+		cmp = (*root)->coord->u - orphan->coord->u;
+
+	} else if (key == 'w') {
+		cmp = (*root)->coord->w - orphan->coord->w;
+
+	} else {
+		printf("ERROR: unknown bst key\n");
+		exit(EXIT_FAILURE);
+	}
+
+
+
 	(*root)->height = 1 + max(height((*root)->left_child), height((*root)->right_child)); // update height
 	// Insert node
 
@@ -306,7 +318,7 @@ BstNode* bst_insert (BstNode **root, BstNode *orphan) {
 			(*root)->right_child = orphan;
 			orphan->parent = *root;
 		} else {
-			bst_insert(&((*root)->right_child), orphan);
+			bst_insert(&((*root)->right_child), orphan, key);
 		}
 	} else if (cmp >= 0) {
 
@@ -314,7 +326,7 @@ BstNode* bst_insert (BstNode **root, BstNode *orphan) {
 			(*root)->left_child = orphan;
 			orphan->parent = *root;
 		} else {
-			bst_insert(&((*root)->left_child), orphan);
+			bst_insert(&((*root)->left_child), orphan, key);
 		}
 	}
 
@@ -505,7 +517,7 @@ void preOrder(BstNode *root)
 {
 	if(root != NULL)
 	{
-		printf("%f, ",root->coord->u);
+		printf("%f, ",root->coord->w);
 		preOrder(root->left_child);
 		preOrder(root->right_child);
 	}

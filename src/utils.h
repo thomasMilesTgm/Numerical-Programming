@@ -69,7 +69,7 @@ Coord * pop(ListNode** list);
 void merge_sort(Coord **arr, int l, int r) ;
 void merge(Coord** arr, int l, int m, int r);
 BstNode * init_bst_node (Coord* coord);
-BstNode* bst_insert (BstNode** root, BstNode *orphan);
+BstNode* bst_insert (BstNode** root, BstNode *orphan, char key);
 BstNode* balance_tree (BstNode **root);
 int max(int a, int b);
 int height(BstNode *N);

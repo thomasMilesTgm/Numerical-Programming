@@ -260,7 +260,7 @@ void searching(const char* flow_file)
 
 		if (i != mid) {
 			BstNode* new_node = init_bst_node(array[i]);
-			bst_insert(&bst_root, new_node);
+			bst_insert(&bst_root, new_node, 'u');
 			balance_tree(&bst_root);
 		}
 	}
@@ -334,15 +334,9 @@ void vortcalc(const char* flow_file)
 		}
 	}
 
-	// compute omega and insertion sort values into a list
-	ListNode* sorted = malloc(sizeof(ListNode));
-	if (sorted==NULL) {
-		printf("ERROR: malloc failure\n");
-		exit(EXIT_FAILURE);
-	}
-	sorted->coord = domain[0][0];
-	sorted->child = NULL;
-	sorted->parent= NULL;
+// compute omega and stick into a BST for efficient sorting
+	BstNode* root = init_bst_node(domain[0][0]);
+
 
 	for (int x=0; x < n_m[0]-1; x++) {
 		for (int y=0; y < n_m[1]-1; y++) {
@@ -357,10 +351,12 @@ void vortcalc(const char* flow_file)
 			double y1 = domain[x+1][y+1]->y;
 			domain[x][y]->w = calculate_w(v0,v1,u0,u1,x0,x1,y0,y1);
 
-			// add to sorted list
 			if (x!=0 && y!=0) {
-				//insertion_sort(&sorted, domain[x][y], 'w');
+				bst_insert(&root, init_bst_node(domain[x][y]), 'w');
+				//balance_tree(&root);
 			}
 		}
 	}
+	preOrder(root);
+
 }

@@ -123,3 +123,17 @@ void linked_list_search(ListNode* node, double key, FILE* out, double closest) {
 		fprintf(out, "\n");
 	}
 }
+
+
+void free_list(ListNode* node) {
+	/**
+	 * Recursively frees the list from memory
+	 */
+
+	if (node == NULL) {
+		return;
+	}
+	free_list(node->child);
+	free(node->coord);
+	free(node);
+}

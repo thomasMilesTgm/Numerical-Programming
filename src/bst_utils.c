@@ -226,7 +226,7 @@ int height(BstNode *N) {
 
 void descending(BstNode *root, FILE *out) {
 	/**
-	 * Recursive descending traversal for printing w in decending order to file
+	 * Recursive descending traversal for printing w in descending order to file
 	 */
 
 	if (root == NULL) {
@@ -236,4 +236,18 @@ void descending(BstNode *root, FILE *out) {
 	descending(root->right_child, out);
 	fprintf(out,"%.6f\n",root->coord->w);
 	descending(root->left_child, out);
+}
+
+void free_tree(BstNode *root) {
+	/**
+	 * Recursive traversal to free the tree from memory
+	 */
+
+	if (root == NULL) {
+		return;
+	}
+	free_tree(root->right_child);
+	free_tree(root->left_child);
+	free(root->coord);
+	free(root);
 }

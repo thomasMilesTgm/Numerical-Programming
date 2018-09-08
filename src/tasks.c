@@ -16,7 +16,7 @@
 
 int maxveldiff(const char* flow_file)
 {
-    char * outfile = "out/task1.csv";
+    char * outfile = "task1.csv";
 
     int num_points = 0;
 
@@ -102,7 +102,7 @@ void coarsegrid(const char* flow_file, int resolution, int num_points)
  *  @param num_points: Number of data points in flow_file (max points in a single grid cell)
  */
 {
-    char * outfile = "out/task2.csv";
+    char * outfile = "task2.csv";
 
     int g_x;
     int g_y;
@@ -190,6 +190,7 @@ void coarsegrid(const char* flow_file, int resolution, int num_points)
 	    fprintf(out, "%.6f,%.6f,%.6f,%.6f,%.6f\n", c->x, c->y, c->u, c->v, c->S);
 	    c = pop(&list);
     }
+	free_list(list);
 }
 
 void searching(const char* flow_file)
@@ -198,7 +199,7 @@ void searching(const char* flow_file)
 	struct timeval stop;
 	double elapsed_ms=0;
 
-	char *outfile = "out/task3.csv";
+	char *outfile = "task3.csv";
 
 
 	int n_center = 0;
@@ -312,11 +313,18 @@ void searching(const char* flow_file)
 	elapsed_ms += (stop.tv_usec - start.tv_usec) / 1000.0;
 	printf("TASK 3:  BST Search:  %.2f milliseconds\n", elapsed_ms);
 
+
+	// free data structures
+	for (int i=0; i<n_center; i++) {
+		free(array[i]);
+	}
+	free_list(list);
+	free_tree(bst_root);
 }
 
 void vortcalc(const char* flow_file)
 {
-	char* outfile = "out/task4.csv";
+	char* outfile = "task4.csv";
 	int i_x=0, i_y=0;
 	int* n_m;
 	n_m = calc_n_m(flow_file);
@@ -370,7 +378,7 @@ void vortcalc(const char* flow_file)
 		}
 	}
 
-// compute omega and stick into a BST for efficient sorting
+	// compute omega and stick into a BST for efficient sorting
 	BstNode* root = init_bst_node(domain[0][0]);
 
 
@@ -397,4 +405,6 @@ void vortcalc(const char* flow_file)
 	fprintf(out, "omega\n");
 	descending(root, out);
 
+	// free the tree
+	free_tree(root);
 }

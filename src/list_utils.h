@@ -24,5 +24,6 @@ typedef struct ListNode {
 ListNode* insertion_sort(ListNode** list, Coord* coord, char sort_by);
 Coord * pop(ListNode** list);
 void linked_list_search(ListNode* node, double key, FILE* out, double closest);
+void free_list(ListNode* node);
 
 #endif //ASSIGNMENT_1_LIST_UTILS_H

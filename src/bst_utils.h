@@ -36,6 +36,7 @@ int get_bf(BstNode* node);
 void bst_search (BstNode *root, double search_key, FILE *output,  bool found);
 BstNode * copy_bst_node(BstNode* node);
 void descending(BstNode *root, FILE *out);
+void free_tree(BstNode *root);
 
 
 #endif //ASSIGNMENT_1_BST_H

@@ -1,17 +1,18 @@
 /***************************************************************************
  *
- *   File        : tasks.c
- *   Student Id  : <INSERT STUDENT ID HERE>
- *   Name        : <INSERT STUDENT NAME HERE>
+ * 	Contains all the functions executed by main.c
+ *
+ *   File        	: tasks.c
+ *   Student Id  	: 626263
+ *   Name        	: Thomas Miles
+ *   Last Modified	: 08/09/18
  *
  ***************************************************************************/
-#include <stdio.h>
-#include <stdlib.h>
-#include <math.h>
-#include <sys/time.h>
-#include <string.h>
+
+
+
 #include "tasks.h"
-#include "utils.h"
+
 
 int maxveldiff(const char* flow_file)
 {
@@ -319,8 +320,6 @@ void vortcalc(const char* flow_file)
 	int i_x=0, i_y=0;
 	int* n_m;
 	n_m = calc_n_m(flow_file);
-//printf("(%d, %d)\n",n_m[0],n_m[1]);
-	//double w[n_m[0]][n_m[1]];
 
 	Coord*** domain = malloc(sizeof(Coord*));
 

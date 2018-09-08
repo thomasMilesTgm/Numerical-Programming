@@ -1,24 +1,24 @@
 /***************************************************************************
  *
- *   File        : main.c
- *   Student Id  : <INSERT STUDENT ID HERE>
- *   Name        : <INSERT STUDENT NAME HERE>
+ * 	Executes main application for each part of ENGR30003 assignment 1
+ * 	Slightly modified from source code provided.
+ *
+ *   File        	: main.c
+ *   Student Id  	: 626263
+ *   Name        	: Thomas Miles
+ *   Last Modified	: 08/09/18
  *
  ***************************************************************************/
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <math.h>
 #include <sys/time.h>
-#include <string.h>
-#include "src/utils.h"
 #include "src/tasks.h"
 
 int main(int argc, char *argv[]) {
 
     char* flow_file = NULL;
     int resolution = 0;
-    char * ptr; // pointer for strtol to use
     int points;
 
 	// parse command line input
